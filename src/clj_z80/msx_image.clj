@@ -1,5 +1,5 @@
 (ns clj-z80.msx-image
-  (:require [clj-z80.asm-header :refer [setup-image-header!]]
+  (:require [clj-z80.asm-header :refer [setup-image-header! variables-origin]]
             [clj-z80.bytes :as b]
             [clj-z80.image :refer :all]
             [clj-z80.opcodes :refer :all]))
@@ -12,6 +12,7 @@
 
 (defmethod setup-image-header! :msx-rom16k
   [_]
+  (reset! variables-origin 0xc000)
   (defpage 0 0x4000 0x2000)
   (setup-msx-rom-header :entry))
 
@@ -47,6 +48,7 @@
 
 (defmethod setup-image-header! :msx-rom32k
   [_]
+  (reset! variables-origin 0xc000)
   (defpage 0 0x4000 0x2000)
   (defpage 1 0x6000 0x2000)
   (setup-msx-rom-header :_start)

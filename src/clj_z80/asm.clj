@@ -1,5 +1,5 @@
 (ns clj-z80.asm
-  (:require [clj-z80.asm-header :refer [setup-image-header!]]
+  (:require [clj-z80.asm-header :refer [setup-image-header! variables-origin]]
             [clj-z80.bytes :as b]
             [clj-z80.image :refer :all]
             [clj-z80.opcodes :refer :all]
@@ -7,7 +7,8 @@
             [clojure.string :as str]
             clj-z80.msx-image))
 
-;; asm
+
+;; asm procedures
 
 (defn asm
   [ns instrs]
@@ -27,10 +28,6 @@
 
 (def procedures (atom {}))
 
-(defn reset-asm!
-  []
-  (reset! procedures {}))
-
 (defn- format-local-labels
   [ns instrs]
   (let [locals (->> instrs
@@ -48,13 +45,46 @@
               i))
           instrs)))
 
+(defn- make-proc
+  [id page instrs]
+  {:id      id
+   :params  {:page page}
+   :opcodes (format-local-labels [id] (asm [id] instrs))})
+
 (defn defasmproc
   [id {:keys [page]} & instrs]
   (when (nil? page)
     (throw (Exception. (str "Proc missing page " id))))
-  (swap! procedures assoc id {:id      id
-                              :params  {:page page}
-                              :opcodes (format-local-labels [id] (asm [id] instrs))}))
+  (let [proc (make-proc id page instrs)]
+    (swap! procedures assoc id proc)))
+
+
+;; asm variables
+
+(def variables (atom {}))
+
+(defn defasmvar
+  [id len]
+  (let [var {:id  id
+             :len len}]
+    (swap! variables assoc id var)))
+
+(defn defasmbyte
+  [id]
+  (defasmvar id 1))
+
+(defn defasmword
+  [id]
+  (defasmvar id 2))
+
+(defn- declare-vars!
+  []
+  (let [address (atom @variables-origin)]
+    (dorun
+     (for [v (vals @variables)]
+       #dbg
+       (do (set-label! (:id v) @address)
+           (reset! address (+ @address (:len v))))))))
 
 
 ;; asm utils
@@ -89,7 +119,13 @@
    (ds len 0)))
 
 
-;; image
+;; asm image
+
+(defn reset-asm!
+  []
+  (reset! procedures {})
+  (reset! variables {})
+  (reset! variables-origin nil))
 
 (defn- emit-procs-bytes!
   []
@@ -102,11 +138,13 @@
                   (emit-bytes (:opcodes proc))))))
        dorun))
 
+
 (defn build-asm-image
   [image-type]
   (reset-pages!)
   (reset-labels!)
   (setup-image-header! image-type)
+  (declare-vars!)
   (emit-procs-bytes!)
   (build-image))
 

@@ -80,14 +80,16 @@
     (throw (Exception. (str "Label already exists " id)))))
 
 (defn set-label!
-  [id]
-  (assert-page *current-page*)
-  (let [page  (get-page *current-page*)
-        label {:page    *current-page*
-               :address (+ (:address page)
-                           (:origin page))}]
-    (swap! *labels* assoc id label)))
-
+  ([id address]
+   (let [label {:address address}]
+     (swap! *labels* assoc id label)))
+  ([id]
+   (assert-page *current-page*)
+   (let [page  (get-page *current-page*)
+         label {:page    *current-page*
+                :address (+ (:address page)
+                            (:origin page))}]
+     (swap! *labels* assoc id label))))
 
 
 ;; emit bytes
