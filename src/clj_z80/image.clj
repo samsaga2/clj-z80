@@ -14,15 +14,16 @@
   (reset! *pages* {}))
 
 (defn- make-page
-  [page-index origin-address length]
+  [page-index origin-address length name]
   {:page    page-index
+   :name    name
    :origin  origin-address
    :address 0
    :image   (atom (vec (replicate length 0)))})
 
 (defn defpage
-  [page-index origin-address length]
-  (let [page (make-page page-index origin-address length)]
+  [page-index origin-address length & [name]]
+  (let [page (make-page page-index origin-address length name)]
     (swap! *pages* assoc page-index page)))
 
 (defn get-page
@@ -57,9 +58,15 @@
        first
        :page))
 
+(defn get-pages-by-name
+  [name]
+  (->> @*pages*
+       vals
+       (filter #(= (:name %) name))
+       (mapv :page)))
+
 
 ;; ns
-
 
 (def ^:dynamic *current-ns* [])
 

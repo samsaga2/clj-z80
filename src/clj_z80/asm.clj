@@ -164,9 +164,10 @@
               (with-ns [(:id proc)]
                 (let [opcodes (:opcodes proc)
                       page    (:page (:params proc))
-                      page    (cond (nil? page)  (find-page (count opcodes))
-                                    (coll? page) (find-page (count opcodes) page)
-                                    :else        page)]
+                      page    (cond (nil? page)     (find-page (count opcodes))
+                                    (coll? page)    (find-page (count opcodes) page)
+                                    (keyword? page) (find-page (count opcodes) (get-pages-by-name page))
+                                    :else           page)]
                   (with-page page
                     (set-label! (:id proc))
                     (emit-bytes opcodes))))))

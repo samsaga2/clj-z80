@@ -6,7 +6,7 @@
 
 (defasmbyte :index)
 
-(defasmproc print {}
+(defasmproc print {:page :code}
   (label :loop
          [:ld :a [:hl]]
          [:or :a]

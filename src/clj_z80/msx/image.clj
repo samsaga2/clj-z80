@@ -4,6 +4,9 @@
             [clj-z80.image :refer :all]
             [clj-z80.opcodes :refer :all]))
 
+
+;; rom 16k
+
 (defn- setup-msx-rom-header
   [entry-label]
   (let [rom-header [0x41 0x42 (b/lw entry-label) (b/hw entry-label) 0 0 0 0 0 0]]
@@ -13,9 +16,11 @@
 (defmethod setup-image-header! :msx-rom16k
   [_]
   (reset! variables-origin 0xc000)
-  (defpage 0 0x4000 0x2000)
+  (defpage 0 0x4000 0x2000 :code)
   (setup-msx-rom-header :entry))
 
+
+;; rom 32k
 
 (defn- emit-find-rom-page-2
   []
@@ -49,8 +54,8 @@
 (defmethod setup-image-header! :msx-rom32k
   [_]
   (reset! variables-origin 0xc000)
-  (defpage 0 0x4000 0x2000)
-  (defpage 1 0x6000 0x2000)
+  (defpage 0 0x4000 0x2000 :code)
+  (defpage 1 0x6000 0x2000 :code)
   (setup-msx-rom-header :_start)
   (with-page 0
     (set-label! :_start)
