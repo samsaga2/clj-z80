@@ -45,6 +45,17 @@
   []
   (get-page *current-page*))
 
+(defn find-page
+  [needed-space & [candidates]]
+  (->> (if candidates
+         (select-keys @*pages* candidates)
+         @*pages*)
+       (sort-by first)
+       vals
+       (remove (fn [{:keys [address image]}]
+                 (> (+ address needed-space) (count @image))))
+       first
+       :page))
 
 
 ;; ns

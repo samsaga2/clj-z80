@@ -65,11 +65,12 @@
     [:ret])
 
   page: the page number to insert this proc bytes
+        can by nil (automatic page)
+        can by a number (can use any free page)
+        can by a vector of numbers (will use the first free page on those candidates)
   include-always: ignore if this proc is unused and include it always (useful for the main proc)"
   [id {:keys [page include-always]} & instrs]
   (let [procid (keyword id)]
-    (when (nil? page)
-      (throw (Exception. (str "Proc missing page " id))))
     `(let [proc# (make-proc ~procid ~page ~(vec instrs))]
        (when ~include-always (inc-proc-refcount ~procid))
        (defn ~id []
@@ -152,9 +153,14 @@
        (remove #(zero? @(:refcount %)))
        (map (fn [proc]
               (with-ns [(:id proc)]
-                (with-page (:page (:params proc))
-                  (set-label! (:id proc))
-                  (emit-bytes (:opcodes proc))))))
+                (let [opcodes (:opcodes proc)
+                      page    (:page (:params proc))
+                      page    (cond (nil? page)  (find-page (count opcodes))
+                                    (coll? page) (find-page (count opcodes) page)
+                                    :else        page)]
+                  (with-page page
+                    (set-label! (:id proc))
+                    (emit-bytes opcodes))))))
        dorun))
 
 (defn build-asm-image
