@@ -4,8 +4,8 @@
             [clj-z80.image :refer :all]
             [clj-z80.opcodes :refer :all]
             [clojure.java.io :as io]
-            [clojure.string :as str]))
-
+            [clojure.string :as str])
+  (:import [java.io File FileInputStream]))
 
 ;; asm procedures
 
@@ -136,6 +136,15 @@
    (repeat len [:db (b/b value)]))
   ([len]
    (ds len 0)))
+
+(defn incbin
+  [filename]
+  (let [f   (File. filename)
+        is  (FileInputStream. f)
+        arr (byte-array (.length f))]
+    (.read is arr)
+    (.close is)
+    (apply db (vec arr))))
 
 
 ;; asm image
