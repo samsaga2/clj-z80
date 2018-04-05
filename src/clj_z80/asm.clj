@@ -4,8 +4,7 @@
             [clj-z80.image :refer :all]
             [clj-z80.opcodes :refer :all]
             [clojure.java.io :as io]
-            [clojure.string :as str]
-            clj-z80.msx-image))
+            [clojure.string :as str]))
 
 
 ;; asm procedures
@@ -45,18 +44,37 @@
               i))
           instrs)))
 
-(defn- make-proc
-  [id page instrs]
-  {:id      id
-   :params  {:page page}
-   :opcodes (format-local-labels [id] (asm [id] instrs))})
+(defn inc-proc-refcount
+  [id]
+  (swap! (get-in @procedures [id :refcount]) inc))
 
-(defn defasmproc
-  [id {:keys [page]} & instrs]
-  (when (nil? page)
-    (throw (Exception. (str "Proc missing page " id))))
-  (let [proc (make-proc id page instrs)]
-    (swap! procedures assoc id proc)))
+(defn make-proc
+  [id page instrs]
+  (let [refcount (get-in @procedures [id :refcount] (atom 0))
+        proc     {:id       id
+                  :params   {:page page}
+                  :opcodes  (format-local-labels [id] (asm [id] instrs))
+                  :refcount refcount}]
+    (swap! procedures assoc id proc)
+    proc))
+
+(defmacro defasmproc
+  "Example:
+  (defasmproc example-proc {:page 0 :include-always true}
+    [:xor :a]
+    [:ret])
+
+  page: the page number to insert this proc bytes
+  include-always: ignore if this proc is unused and include it always (useful for the main proc)"
+  [id {:keys [page include-always]} & instrs]
+  (let [procid (keyword id)]
+    (when (nil? page)
+      (throw (Exception. (str "Proc missing page " id))))
+    `(let [proc# (make-proc ~procid ~page ~(vec instrs))]
+       (when ~include-always (inc-proc-refcount ~procid))
+       (defn ~id []
+         (inc-proc-refcount ~procid)
+         ~procid))))
 
 
 ;; asm variables
@@ -131,13 +149,13 @@
   []
   (->> @procedures
        vals
+       (remove #(zero? @(:refcount %)))
        (map (fn [proc]
               (with-ns [(:id proc)]
                 (with-page (:page (:params proc))
                   (set-label! (:id proc))
                   (emit-bytes (:opcodes proc))))))
        dorun))
-
 
 (defn build-asm-image
   [image-type]

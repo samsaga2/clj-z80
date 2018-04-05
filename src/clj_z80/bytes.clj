@@ -25,6 +25,7 @@
   [n]
   (cond (number? n)  (bit-and (word-two-complement n) 255)
         (keyword? n) [:low-word n]
+        (fn? n)      (lw (n))
         :else        (throw (Exception. (str "Word expected " n)))))
 
 (defn hw
@@ -34,18 +35,21 @@
                          (bit-shift-right 8)
                          (bit-and 255))
         (keyword? n) [:high-word n]
+        (fn? n)      (hw (n))
         :else        (throw (Exception. (str "Word expected " n)))))
 
 (defn b
   [n]
   (cond (number? n)  (byte-two-complement n)
         (keyword? n) [:byte n]
+        (fn? n)      (b (n))
         :else        (throw (Exception. (str "Byte expected " n)))))
 
 (defn e
   [n]
   (cond (number? n)  (byte-two-complement n)
         (keyword? n) [:displacement n]
+        (fn? n)      (e (n))
         :else        (throw (Exception. (str "Byte expected " n)))))
 
 

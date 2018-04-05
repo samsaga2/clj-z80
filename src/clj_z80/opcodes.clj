@@ -8,6 +8,7 @@
   (let [forbidden-labels #{:a :b :c :d :e :h :l :ixl :ixh :iyl :iyh :r
                            :af :bc :de :hl :ix :iy :sp}]
     (or (number? n)
+        (fn? n)
         (and (keyword? n)
              (not (contains? forbidden-labels n))))))
 
