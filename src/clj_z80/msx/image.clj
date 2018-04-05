@@ -1,4 +1,4 @@
-(ns clj-z80.msx-image
+(ns clj-z80.msx.image
   (:require [clj-z80.asm-header :refer [setup-image-header! variables-origin]]
             [clj-z80.bytes :as b]
             [clj-z80.image :refer :all]

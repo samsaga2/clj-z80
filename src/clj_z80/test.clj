@@ -1,7 +1,8 @@
 (ns clj-z80.test
   (:require [clj-z80.asm :refer :all :refer-macros :all]
-            [clj-z80.msx-bios :as bios]
-            [clojure.java.shell :refer [sh]]))
+            [clj-z80.msx.bios :as bios]
+            [clojure.java.shell :refer [sh]]
+            clj-z80.msx.image))
 
 (defasmbyte :index)
 

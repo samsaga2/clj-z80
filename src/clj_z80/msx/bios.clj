@@ -1,4 +1,4 @@
-(ns clj-z80.msx-bios)
+(ns clj-z80.msx.bios)
 
 
 ;; from http://map.grauw.nl/resources/msxbios.php
