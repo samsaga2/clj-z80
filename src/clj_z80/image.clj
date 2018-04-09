@@ -5,13 +5,13 @@
 
 ;; pages
 
-(def *pages* (atom {}))
+(def pages (atom {}))
 
 (def ^:dynamic *current-page* nil)
 
 (defn reset-pages!
   []
-  (reset! *pages* {}))
+  (reset! pages {}))
 
 (defn- make-page
   [page-index origin-address length name]
@@ -24,11 +24,11 @@
 (defn defpage
   [page-index origin-address length & [name]]
   (let [page (make-page page-index origin-address length name)]
-    (swap! *pages* assoc page-index page)))
+    (swap! pages assoc page-index page)))
 
 (defn get-page
   [page-index]
-  (get @*pages* page-index))
+  (get @pages page-index))
 
 (defn assert-page
   [page-index]
@@ -49,8 +49,8 @@
 (defn find-page
   [needed-space & [candidates]]
   (->> (if candidates
-         (select-keys @*pages* candidates)
-         @*pages*)
+         (select-keys @pages candidates)
+         @pages)
        (sort-by first)
        vals
        (remove (fn [{:keys [address image]}]
@@ -60,7 +60,7 @@
 
 (defn get-pages-by-name
   [name]
-  (->> @*pages*
+  (->> @pages
        vals
        (filter #(= (:name %) name))
        (mapv :page)))
@@ -79,17 +79,17 @@
 
 ;; labels
 
-(def *labels* (atom {}))
+(def labels (atom {}))
 
 (defn reset-labels!
   []
-  (reset! *labels* {}))
+  (reset! labels {}))
 
 (defn get-label
   [id]
   (or
-   (get @*labels* (keyword (str/join "/" (map name (conj *current-ns* id)))))
-   (get @*labels* id)
+   (get @labels (keyword (str/join "/" (map name (conj *current-ns* id)))))
+   (get @labels id)
    (throw (Exception. (str "Unknown label " id)))))
 
 (defn assert-undeclared-label
@@ -100,14 +100,14 @@
 (defn set-label!
   ([id address]
    (let [label {:address address}]
-     (swap! *labels* assoc id label)))
+     (swap! labels assoc id label)))
   ([id]
    (assert-page *current-page*)
    (let [page  (get-page *current-page*)
          label {:page    *current-page*
                 :address (+ (:address page)
                             (:origin page))}]
-     (swap! *labels* assoc id label))))
+     (swap! labels assoc id label))))
 
 
 ;; emit bytes
@@ -121,7 +121,7 @@
     (when (>= address (count @image))
       (throw (Exception. (str "Page overflow " (:page page)))))
     (swap! image assoc address b)
-    (swap! *pages* update-in [*current-page* :address] inc)))
+    (swap! pages update-in [*current-page* :address] inc)))
 
 (defn emit-bytes
   [bytes]
@@ -154,7 +154,7 @@
 
 (defn build-image
   []
-  (->> @*pages*
+  (->> @pages
        vals
        (sort-by :page)
        (map build-image-page)
