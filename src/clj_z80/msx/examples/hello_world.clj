@@ -1,4 +1,4 @@
-(ns clj-z80.test
+(ns clj-z80.msx.examples.hello-world
   (:require [clj-z80.asm :refer :all :refer-macros :all]
             [clj-z80.msx.bios :as bios]
             [clojure.java.shell :refer [sh]]

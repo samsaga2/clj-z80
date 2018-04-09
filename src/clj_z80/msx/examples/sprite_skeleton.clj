@@ -1,4 +1,4 @@
-(ns clj-z80.test2
+(ns clj-z80.msx.examples.sprite-skeleton
   (:require [clj-z80.asm :refer :all :refer-macros :all]
             [clj-z80.msx.bios :as bios]
             [clj-z80.msx.sysvars :as sysvars]
