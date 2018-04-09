@@ -51,7 +51,7 @@
          [:halt]
          [:jr :loop]))
 
-(defasmproc entry {:page 0 :include-always true}
+(defasmproc entry {:page 0 :include-always true :label :entry}
   [:call init]
   [:jp main-loop])
 

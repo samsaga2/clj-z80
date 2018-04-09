@@ -68,9 +68,10 @@
         can by nil (automatic page)
         can by a number (can use any free page)
         can by a vector of numbers (will use the first free page on those candidates)
-  include-always: ignore if this proc is unused and include it always (useful for the main proc)"
-  [id {:keys [page include-always]} & instrs]
-  (let [procid (keyword id)]
+  include-always: ignore if this proc is unused and include it always (useful for the main proc)
+  label: use this as label name"
+  [id {:keys [page include-always label]} & instrs]
+  (let [procid (or label (keyword (str (ns-name *ns*) "" id)))]
     `(let [proc# (make-proc ~procid ~page ~(vec instrs))]
        (when ~include-always (inc-proc-refcount ~procid))
        (defn ~id []
