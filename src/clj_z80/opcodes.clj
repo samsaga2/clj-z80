@@ -1245,7 +1245,7 @@
          [:cp [:hl]]                [0xbe]
          [:cp :a]                   [0xbf]
          [:ret :nz]                 [0xc0]
-         [:pop [:bc]]               [0xc1]
+         [:pop :bc]                 [0xc1]
          [:jp :nz (nn :guard n?)]   [0xc2 (lw nn) (hw nn)]
          [:jp (nn :guard n?)]       [0xc3 (lw nn) (hw nn)]
          [:call :nz (nn :guard n?)] [0xc4 (lw nn) (hw nn)]
