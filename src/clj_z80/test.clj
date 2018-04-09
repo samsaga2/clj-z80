@@ -15,11 +15,15 @@
          [:inc :hl]
          [:jr :loop]))
 
-(defasmproc entry {:page 0 :include-always true}
-  [:ld :a 0]
-  [:call bios/CHGMOD]
-  [:ld :hl :hello-world]
-  [:call print]
+(defasmproc hello-world {}
+  [:ld :hl :text]
+  [:jp print]
+  (label :text
+         (db "Hello world!" 13 10)
+         (db "by Victor M." 13 10)
+         (db "<samsaga2@gmail.com>" 13 10 0)))
+
+(defasmproc char-loop {}
   (label :loop
          [:ld :a 13]
          [:call bios/CHPUT]
@@ -29,11 +33,13 @@
          [:ld [:index] :a]
          [:add (int \A)]
          [:call bios/CHPUT]
-         [:jr :loop])
-  (label :hello-world
-         (db "Hello world!" 13 10)
-         (db "by Victor M." 13 10)
-         (db "<samsaga2@gmail.com>" 13 10 0)))
+         [:jr :loop]))
+
+(defasmproc entry {:page 0 :include-always true}
+  [:xor :a]
+  [:call bios/CHGMOD]
+  [:call hello-world]
+  [:jp char-loop])
 
 (defasmproc unused-proc {:page 0}
   [:ret])
