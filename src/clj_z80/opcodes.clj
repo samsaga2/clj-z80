@@ -1053,7 +1053,7 @@
   [instr]
   (match instr
          [:nop]                     [0x00]
-         [:ld [:bc] (nn :guard n?)] [0x01 (lw nn) (hw nn)]
+         [:ld :bc (nn :guard n?)]   [0x01 (lw nn) (hw nn)]
          [:ld [:bc] :a]             [0x02]
          [:inc :bc]                 [0x03]
          [:inc :b]                  [0x04]
