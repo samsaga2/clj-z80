@@ -101,7 +101,6 @@
   (let [address (atom @variables-origin)]
     (dorun
      (for [v (vals @variables)]
-       #dbg
        (do (set-label! (:id v) @address)
            (reset! address (+ @address (:len v))))))))
 
