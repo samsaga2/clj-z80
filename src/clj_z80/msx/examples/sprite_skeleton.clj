@@ -55,5 +55,5 @@
   [:call init]
   [:jp main-loop])
 
-(build-asm-image-file "test2.rom" :msx-rom32k)
-(sh "openmsx" "-carta" "test2.rom")
+(build-asm-image-file "test.rom" :msx-rom32k)
+(sh "openmsx" "-carta" "test.rom")
