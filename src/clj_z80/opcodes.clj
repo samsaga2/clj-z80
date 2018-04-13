@@ -1305,6 +1305,7 @@
          [:cp (n :guard n?)]        [0xfe (b n)]
          [:rst 0x38]                [0xff]
          [:db (n :guard n?)]        [n]
+         [:db (r :guard coll?)]     (map b r)
          :else                      nil))
 
 (defn assemble-instr
