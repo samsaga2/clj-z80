@@ -44,17 +44,11 @@
               i))
           instrs)))
 
-(defn inc-proc-refcount
-  [id]
-  (swap! (get-in @procedures [id :refcount]) inc))
-
 (defn make-proc
   [id page instrs]
-  (let [refcount (get-in @procedures [id :refcount] (atom 0))
-        proc     {:id       id
-                  :params   {:page page}
-                  :opcodes  (format-local-labels [id] (asm [id] instrs))
-                  :refcount refcount}]
+  (let [proc {:id      id
+              :params  {:page page}
+              :opcodes (format-local-labels [id] (asm [id] instrs))}]
     (swap! procedures assoc id proc)
     proc))
 
@@ -68,14 +62,11 @@
         can by nil (automatic page)
         can by a number (can use any free page)
         can by a vector of numbers (will use the first free page on those candidates)
-  include-always: ignore if this proc is unused and include it always (useful for the main proc)
   label: use this as label name"
-  [id {:keys [page include-always label]} & instrs]
+  [id {:keys [page label]} & instrs]
   (let [procid (or label (keyword (str (ns-name *ns*) "---" id)))]
     `(let [proc# (make-proc ~procid ~page ~(vec instrs))]
-       (when ~include-always (inc-proc-refcount ~procid))
        (defn ~id []
-         (inc-proc-refcount ~procid)
          ~procid))))
 
 
@@ -159,7 +150,6 @@
   []
   (->> @procedures
        vals
-       (remove #(zero? @(:refcount %)))
        (map (fn [proc]
               (with-ns [(:id proc)]
                 (let [opcodes (:opcodes proc)
