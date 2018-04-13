@@ -7,7 +7,7 @@
   [n]
   (if (or (> n 255)
           (< n -127))
-    (throw (Exception. "Overflow byte"))
+    (throw (Exception. (str "Overflow byte " n)))
     (if (neg? n)
       (inc (bit-xor 0xff (- n)))
       n)))
@@ -16,7 +16,7 @@
   [n]
   (if (or (> n 65535)
           (< n -32767))
-    (throw (Exception. "Overflow byte"))
+    (throw (Exception. (str "Overflow word " n)))
     (if (neg?  n)
       (inc (bit-xor 0xffff (- n)))
       n)))
