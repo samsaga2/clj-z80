@@ -71,7 +71,7 @@
   include-always: ignore if this proc is unused and include it always (useful for the main proc)
   label: use this as label name"
   [id {:keys [page include-always label]} & instrs]
-  (let [procid (or label (keyword (str (ns-name *ns*) "" id)))]
+  (let [procid (or label (keyword (str (ns-name *ns*) "---" id)))]
     `(let [proc# (make-proc ~procid ~page ~(vec instrs))]
        (when ~include-always (inc-proc-refcount ~procid))
        (defn ~id []
