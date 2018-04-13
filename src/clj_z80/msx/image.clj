@@ -3,6 +3,7 @@
             [clj-z80.bytes :as b]
             [clj-z80.image :refer :all]
             [clj-z80.msx.bios :as bios]
+            [clj-z80.msx.sysvars :as sysvars]
             [clj-z80.opcodes :refer :all]))
 
 

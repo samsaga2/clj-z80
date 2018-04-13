@@ -3,7 +3,25 @@
             [mikera.image.core :refer :all]))
 
 
-;; colors
+;; image
+
+(defn- split-image-into-tiles
+  [image color-conversion]
+  (let [w        (width image)
+        h        (height image)
+        get-tile (fn [start-x start-y]
+                   (for [y (range 8)]
+                     (for [x (range 8)]
+                       (let [pixel (.getRGB image (int (+ start-x x)) (int (+ start-y y)))]
+                         (color-conversion pixel)))))]
+    (assert (= w 256))
+    (assert (= h 192))
+    (for [y (range 24)]
+      (for [x (range 32)]
+        (get-tile (* x 8) (* y 8))))))
+
+
+;; msx1 colors
 
 (def msx1-colors
   (mapv (fn [[r g b]] (java.awt.Color. r g b 255))
@@ -44,25 +62,14 @@
        first
        first))
 
-(get-msx1-color-index (java.awt.Color. 84 85 237))
+(defn- extract-image-msx1-colors
+  [image]
+  (->> image get-pixels distinct
+       (map (fn [c] [c (get-msx1-color-index (java.awt.Color. c))]))
+       (into {})))
 
 
-;; image
-
-(defn- split-image-into-tiles
-  [image color-conversion]
-  (let [w        (width image)
-        h        (height image)
-        get-tile (fn [start-x start-y]
-                   (for [y (range 8)]
-                     (for [x (range 8)]
-                       (let [pixel (.getRGB image (int (+ start-x x)) (int (+ start-y y)))]
-                         (color-conversion pixel)))))]
-    (assert (= w 256))
-    (assert (= h 192))
-    (for [y (range 24)]
-      (for [x (range 32)]
-        (get-tile (* x 8) (* y 8))))))
+;; screen 2
 
 (defn- extract-row-screen2-colors
   [row]
@@ -81,12 +88,6 @@
   [row]
   (let [colors (extract-row-screen2-colors row)]
     (BigInteger. (str/join (map #(str (get colors %)) row)) 2)))
-
-(defn- extract-image-msx1-colors
-  [image]
-  (->> image get-pixels distinct
-       (map (fn [c] [c (get-msx1-color-index (java.awt.Color. c))]))
-       (into {})))
 
 (defn convert-screen2
   [filename type]

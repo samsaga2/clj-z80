@@ -27,16 +27,17 @@
 
 (defasmproc load-screen {}
   [:di]
+  ;; uncompress tile patterns
   [:ld :hl 0]
   [:call bios/SETWRT]
   [:ld :hl screen-patterns]
   [:call uncompress-lz77-to-vram]
-
+  ;; uncompress tile colors
   [:ld :hl 0x2000]
   [:call bios/SETWRT]
   [:ld :hl screen-colors]
   [:call uncompress-lz77-to-vram]
-  [:di]
+  [:ei]
   [:ret])
 
 (defasmproc entry {:page 0 :include-always true :label :entry}
