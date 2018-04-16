@@ -35,14 +35,11 @@
          [:call bios/CHPUT]
          [:jr :loop]))
 
-(defasmproc entry {:page 0 :include-always true}
+(defasmproc entry {:page 0 :include-always true :label :entry}
   [:xor :a]
   [:call bios/CHGMOD]
   [:call hello-world]
   [:jp char-loop])
-
-(defasmproc unused-proc {:page 0}
-  [:ret])
 
 (build-asm-image-file "test.rom" :msx-rom32k)
 (sh "openmsx" "-carta" "test.rom")
