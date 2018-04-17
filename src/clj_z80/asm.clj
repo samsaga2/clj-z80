@@ -119,7 +119,7 @@
   [& words]
   (vec
    (mapcat (fn [w]
-             [(b/lw w) (b/hw w)])
+             [:db [(b/lw w) (b/hw w)]])
            words)))
 
 (defn ds
