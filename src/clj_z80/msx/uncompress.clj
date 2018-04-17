@@ -1,7 +1,7 @@
 (ns clj-z80.msx.uncompress
   (:require [clj-z80.asm :refer :all]))
 
-(defasmvar :buffer 512)
+(defasmvar buffer 512)
 
 (defasmproc uncompress-lz77-to-vram {:page :code}
   ;; bc=token count
@@ -12,7 +12,7 @@
 
   ;; de=dest (256 bytes align)
   [:push :hl]
-  [:ld :hl :buffer]
+  [:ld :hl buffer]
   [:ld :de 256]
   [:add :hl :de]
   [:ld :l 0]

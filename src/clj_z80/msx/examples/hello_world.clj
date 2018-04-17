@@ -4,7 +4,7 @@
             [clojure.java.shell :refer [sh]]
             clj-z80.msx.image))
 
-(defasmbyte :index)
+(defasmbyte index)
 
 (defasmproc print {:page :code}
   (label :loop
@@ -27,10 +27,10 @@
   (label :loop
          [:ld :a 13]
          [:call bios/CHPUT]
-         [:ld :a [:index]]
+         [:ld :a [index]]
          [:inc :a]
          [:and 2r1111]
-         [:ld [:index] :a]
+         [:ld [index] :a]
          [:add (int \A)]
          [:call bios/CHPUT]
          [:jr :loop]))

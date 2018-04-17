@@ -75,19 +75,25 @@
 
 (def variables (atom {}))
 
-(defn defasmvar
+(defn make-var
   [id len]
   (let [var {:id  id
              :len len}]
     (swap! variables assoc id var)))
 
-(defn defasmbyte
-  [id]
-  (defasmvar id 1))
+(defmacro defasmvar
+  [id len]
+  (let [varid (keyword (str (ns-name *ns*) "---" id))]
+    `(let [var# (make-var ~varid ~len)]
+       (def ~id ~varid))))
 
-(defn defasmword
+(defmacro defasmbyte
   [id]
-  (defasmvar id 2))
+  `(defasmvar ~id 1))
+
+(defmacro defasmword
+  [id]
+  `(defasmvar ~id 2))
 
 (defn- declare-vars!
   []
