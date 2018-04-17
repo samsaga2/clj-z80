@@ -43,6 +43,10 @@
   (cond (number? n)  (byte-two-complement n)
         (keyword? n) [:byte n]
         (fn? n)      (b (n))
+        (and (coll? n)
+             (= (count n) 2)
+             (contains? #{:low-word :high-word :displacement} (first n)))
+        n
         :else        (throw (Exception. (str "Byte expected " n)))))
 
 (defn e

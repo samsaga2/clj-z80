@@ -1,7 +1,6 @@
 (ns clj-z80.opcodes
-  (:require [clojure.core.match :refer [match]]
-            [clj-z80.bytes :refer :all]))
-
+  (:require [clj-z80.bytes :refer :all]
+            [clojure.core.match :refer [match]]))
 
 (defn n?
   [n]
@@ -9,6 +8,9 @@
                            :af :bc :de :hl :ix :iy :sp}]
     (or (number? n)
         (fn? n)
+        (and (coll? n)
+             (= (count n) 2)
+             (contains? #{:low-word :high-word :displacement} (first n)))
         (and (keyword? n)
              (not (contains? forbidden-labels n))))))
 
@@ -1305,7 +1307,10 @@
          [:cp (n :guard n?)]        [0xfe (b n)]
          [:rst 0x38]                [0xff]
          [:db (n :guard n?)]        [n]
-         [:db (r :guard coll?)]     (map b r)
+         [:db (r :guard
+                 (fn [n]
+                   (and (not (n? n))
+                        (coll? n))))] (map b r)
          :else                      nil))
 
 (defn assemble-instr
