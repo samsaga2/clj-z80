@@ -1,8 +1,8 @@
 (ns clj-z80.msx.examples.screen-grass
   (:require [clj-z80.asm :refer :all :refer-macros :all]
-            [clj-z80.msx.bios :as bios]
-            [clj-z80.msx.sysvars :as sysvars]
-            [clj-z80.msx.uncompress :refer [uncompress-lz77-to-vram]]
+            [clj-z80.msx.lib.bios :as bios]
+            [clj-z80.msx.lib.sysvars :as sysvars]
+            [clj-z80.msx.lib.uncompress :refer [uncompress-lz77-to-vram]]
             [clj-z80.msx.util.graphics :refer [convert-screen2]]
             [clj-z80.msx.util.compress :refer [compress-lz77]]
             [clojure.java.shell :refer [sh]]

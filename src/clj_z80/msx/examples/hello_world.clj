@@ -1,6 +1,6 @@
 (ns clj-z80.msx.examples.hello-world
   (:require [clj-z80.asm :refer :all :refer-macros :all]
-            [clj-z80.msx.bios :as bios]
+            [clj-z80.msx.lib.bios :as bios]
             [clojure.java.shell :refer [sh]]
             clj-z80.msx.image))
 

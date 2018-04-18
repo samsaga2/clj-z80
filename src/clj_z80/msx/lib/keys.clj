@@ -1,5 +1,5 @@
-(ns clj-z80.msx.keys
-  (:require [clj-z80.msx.sysvars :as sysvars]))
+(ns clj-z80.msx.lib.keys
+  (:require [clj-z80.msx.lib.sysvars :as sysvars]))
 
 ;; MSX international keyboard
 ;; http://map.grauw.nl/articles/keymatrix.php

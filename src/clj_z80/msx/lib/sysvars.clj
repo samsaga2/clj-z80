@@ -1,4 +1,4 @@
-(ns clj-z80.msx.sysvars)
+(ns clj-z80.msx.lib.sysvars)
 
 (def RDPRIM 0xf380)
 (def WRPRIM 0xf385)

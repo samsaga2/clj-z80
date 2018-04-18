@@ -1,10 +1,10 @@
 (ns clj-z80.msx.examples.sprite-skeleton
   (:require [clj-z80.asm :refer :all :refer-macros :all]
-            [clj-z80.msx.bios :as bios]
-            [clj-z80.msx.sysvars :as sysvars]
+            [clj-z80.msx.lib.bios :as bios]
+            [clj-z80.msx.lib.sysvars :as sysvars]
             [clj-z80.msx.util.sprites :refer [convert-sprite-16x16]]
-            [clj-z80.msx.keys :as keys]
-            [clj-z80.msx.sprites :as spr]
+            [clj-z80.msx.lib.keys :as keys]
+            [clj-z80.msx.lib.sprites :as spr]
             [clojure.java.shell :refer [sh]]
             clj-z80.msx.image))
 

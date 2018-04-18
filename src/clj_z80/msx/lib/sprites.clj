@@ -1,6 +1,6 @@
-(ns clj-z80.msx.sprites
+(ns clj-z80.msx.lib.sprites
   (:require [clj-z80.asm :refer :all]
-            [clj-z80.msx.bios :as bios]))
+            [clj-z80.msx.lib.bios :as bios]))
 
 (def +attribute-y+ 0)
 (def +attribute-x+ 1)

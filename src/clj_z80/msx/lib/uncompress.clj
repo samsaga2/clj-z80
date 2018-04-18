@@ -1,4 +1,4 @@
-(ns clj-z80.msx.uncompress
+(ns clj-z80.msx.lib.uncompress
   (:require [clj-z80.asm :refer :all]))
 
 (defasmvar buffer 512)
