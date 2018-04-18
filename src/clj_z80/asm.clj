@@ -15,7 +15,10 @@
   (->> instrs
        (reduce (fn [out instr]
                  (concat out
-                         (cond (and (vector? instr) (= (first instr) :local-label))
+                         (cond (empty? instr)
+                               []
+
+                               (and (vector? instr) (= (first instr) :local-label))
                                [instr]
 
                                (vector? (first instr))
@@ -151,7 +154,8 @@
   []
   (reset! procedures {})
   (reset! variables {})
-  (reset! variables-origin nil))
+  (reset! variables-origin nil)
+  (reset-labels!))
 
 (defn- emit-procs-bytes!
   []
@@ -173,7 +177,6 @@
 (defn build-asm-image
   [image-type]
   (reset-pages!)
-  (reset-labels!)
   (setup-image-header! image-type)
   (declare-vars!)
   (emit-procs-bytes!)

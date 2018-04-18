@@ -41,5 +41,7 @@
   [:call hello-world]
   [:jp char-loop])
 
-(build-asm-image-file "test.rom" :msx-rom32k)
-(sh "openmsx" "-carta" "test.rom")
+(defn -main
+  [& args]
+  (build-asm-image-file "test.rom" :msx-rom32k)
+  (sh "openmsx" "-carta" "test.rom"))
