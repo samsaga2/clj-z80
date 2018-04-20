@@ -187,3 +187,12 @@
   (let [image (byte-array (build-asm-image image-type))]
     (with-open [out (io/output-stream (io/file filename))]
       (.write out image))))
+
+(defn build-sym-file
+  [filename]
+  (->> @labels
+       (map (fn [[key {:keys [address]}]]
+              (let [key (str/replace (name key) #"[-\.]" "_")]
+                (format "%s: equ 0x%x" key address))))
+       (str/join "\n")
+       (spit filename)))
