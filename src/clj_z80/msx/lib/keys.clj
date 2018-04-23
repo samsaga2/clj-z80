@@ -99,13 +99,13 @@
     [:ld :a [(+ sysvars/NEWKEY row)]]
     (throw (Exception. "Unknown key"))))
 
-(defn bit-key-pressed
+(defn bit-key-down
   [keyname]
   (if-let [{:keys [_ col]} (get keys keyname)]
     [:bit col :a]
     (throw (Exception. "Unknown key"))))
 
-(defn key-pressed?
+(defn key-down?
   [keyname]
   [(ld-a-key-row keyname)
-   (bit-key-pressed keyname)])
+   (bit-key-down keyname)])

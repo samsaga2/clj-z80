@@ -34,10 +34,10 @@
 
 (defasmproc move {}
   (keys/ld-a-key-row "RIGHT")
-  (keys/bit-key-pressed "RIGHT") [:call :z :right]
-  (keys/bit-key-pressed "LEFT")  [:call :z :left]
-  (keys/bit-key-pressed "UP")    [:call :z :up]
-  (keys/bit-key-pressed "DOWN")  [:call :z :down]
+  (keys/bit-key-down "RIGHT") [:call :z :right]
+  (keys/bit-key-down "LEFT")  [:call :z :left]
+  (keys/bit-key-down "UP")    [:call :z :up]
+  (keys/bit-key-down "DOWN")  [:call :z :down]
   [:ret]
   (label :right [:inc [:ix spr/+attribute-x+]] [:ret])
   (label :left  [:dec [:ix spr/+attribute-x+]] [:ret])
