@@ -121,29 +121,44 @@
 
 ;; key pressed
 
+(defasmvar new-keys 11)
 (defasmvar old-keys 11)
 
-(defasmproc update-keys {:page :code}
-  [:ld :hl sysvars/NEWKEY]
+(defasmproc init-keys {:page :code}
+  [:ld :hl old-keys]
+  [:ld [:hl] 0]
   [:ld :de old-keys]
+  [:inc :de]
+  [:ld :bc 10]
+  [:ldir]
+  [:ret])
+
+(defasmproc update-keys {:page :code}
+  [:ld :hl new-keys]
+  [:ld :de old-keys]
+  [:ld :bc 11]
+  [:ldir]
+
+  [:ld :hl sysvars/NEWKEY]
+  [:ld :de new-keys]
   [:ld :bc 11]
   [:ldir]
   [:ret])
 
 (defasmproc key-pressed? {:page :code}
-  ;; https://www.msx.org/forum/msx-talk/development/reding-keybord-assembly
   ;; e = key line
   ;; c = key bit
-  [:ld :hl sysvars/NEWKEY]
+  [:ld :hl new-keys]
   [:ld :d 0]
   [:add :hl :de]
   [:ld :a [:hl]]
   [:and :c]
-  [:ret :z]
-  [:ld :b :a]
+  [:ret :nz]
+
   [:ld :hl old-keys]
+  [:ld :d 0]
   [:add :hl :de]
   [:ld :a [:hl]]
+  [:cpl]
   [:and :c]
-  [:cp :b]
 	[:ret])
