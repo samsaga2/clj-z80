@@ -1,5 +1,6 @@
 (ns clj-z80.msx.lib.uncompress
-  (:require [clj-z80.asm :refer :all]))
+  (:require [clj-z80.asm :refer :all]
+            [clj-z80.image :refer [get-label]]))
 
 (defasmvar buffer 512)
 
@@ -11,13 +12,7 @@
   [:inc :hl]
 
   ;; de=dest (256 bytes align)
-  [:push :hl]
-  [:ld :hl buffer]
-  [:ld :de 256]
-  [:add :hl :de]
-  [:ld :l 0]
-  [:ex :de :hl]
-  [:pop :hl]
+  [:ld :de (fn [] (bit-and (:address (get-label buffer)) 0xff00))]
 
   ;; uncompress loop
   (label :loop

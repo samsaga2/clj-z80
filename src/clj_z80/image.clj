@@ -19,7 +19,7 @@
    :name    name
    :origin  origin-address
    :address 0
-   :image   (atom (vec (replicate length 0)))})
+   :image   (atom (vec (repeat length 0)))})
 
 (defn defpage
   [page-index origin-address length & [name]]
@@ -134,23 +134,31 @@
 
 ;; build image
 
+(defn- build-image-byte
+  [b address]
+  (cond (and (coll? b) (fn? (second b)))
+        (recur [(first b) ((second b))] address)
+
+        (number? b)
+        b
+
+        :else (let [[id v] b
+                    v      (cond (number? v)  v
+                                 (keyword? v) (:address (get-label v)))]
+                (case id
+                  :byte         (b/b v)
+                  :low-word     (b/lw v)
+                  :high-word    (b/hw v)
+                  :displacement (b/e (- v address 1))))))
+
 (defn- build-image-page
   [{:keys [image origin]}]
-  (letfn [(check-type [b] (assert (number? b)) b)]
-    (vec
-     (reduce (fn [out b]
-               (->> (cond (number? b)               b
-                          (b/byte-label? b)         (-> b second get-label :address b/b)
-                          (b/low-word-label? b)     (-> b second get-label :address b/lw)
-                          (b/high-word-label? b)    (-> b second get-label :address b/hw)
-                          (b/displacement-label? b) (let [label        (-> b second get-label :address)
-                                                          current      (+ (count out) origin)
-                                                          instr-opcode 1]
-                                                      (b/e (- label current instr-opcode))))
-                    check-type
-                    (conj out)))
-             []
-             @image))))
+  (vec
+   (map-indexed (fn [index b]
+                  (let [b (build-image-byte b (+ index origin))]
+                    (assert (number? b))
+                    b))
+                @image)))
 
 (defn build-image
   []
