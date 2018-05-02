@@ -12,7 +12,8 @@
   [:inc :hl]
 
   ;; de=dest (256 bytes align)
-  [:ld :de (fn [] (bit-and (:address (get-label buffer)) 0xff00))]
+  [:ld :de (fn [] (bit-and (+ (:address (get-label buffer)) 256)
+                           0xff00))]
 
   ;; uncompress loop
   (label :loop
