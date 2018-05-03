@@ -2,14 +2,17 @@
   (:require [clj-z80.asm :refer :all :refer-macros :all]
             [clj-z80.msx.lib.bios :as bios]
             [clj-z80.msx.lib.sysvars :as sysvars]
-            [clj-z80.msx.util.sprites :refer [convert-sprite-16x16]]
             [clj-z80.msx.lib.keys :as keys]
             [clj-z80.msx.lib.sprites :as spr]
+            [clj-z80.msx.util.graphics :refer [convert-sprite-16x16]]
             [clojure.java.shell :refer [sh]]
             clj-z80.msx.image))
 
-(defasmproc skeleton {:page 1}
-  (apply db (convert-sprite-16x16 "resources/sprites/skeleton.png")))
+(let [sprite (convert-sprite-16x16 "resources/sprites/skeleton.png")]
+  (assert (= (count (:colors sprite)) 1))
+  (defasmproc skeleton {:page 1}
+    (apply db (first (:patterns sprite))))
+  (def skeleton-color (first (:colors sprite))))
 
 (defasmproc init {}
   ;; screen 2,2
@@ -29,7 +32,7 @@
   ;; setup sprite attribute
   [:call spr/clear-attributes]
   (spr/ld-ix-attributes 0)
-  (spr/write-ix-attributes :y 20 :x 20 :pattern 0 :color 15)
+  (spr/write-ix-attributes :y 20 :x 20 :pattern 0 :color skeleton-color)
   [:jp spr/write-attributes])
 
 (defasmproc move {}

@@ -109,3 +109,34 @@
                                tiles))]
     [image-colors
      image-patterns]))
+
+
+;; sprites
+
+(defn convert-sprite-16x16
+  [filename]
+  (let [image           (load-image filename)
+        w               (width image)
+        h               (height image)
+        image-colors    (extract-image-msx1-colors image)
+        final-colors    (vec (remove zero? (sort (vals image-colors))))
+        pixels          (get-pixels image)
+        parse-row       (fn [row] (BigInteger. (apply str row) 2))
+        convert-part    (fn [x-offset color]
+                          (map (fn [y]
+                                 (->> (range 8)
+                                      (map #(+ % x-offset (* (height image) y)))
+                                      (map #(get pixels %))
+                                      (map #(get image-colors %))
+                                      (map #(if (= % color) 1 0))
+                                      parse-row))
+                               (range h)))
+        convert-pattern (fn [color]
+                          (vec
+                           (concat (convert-part 0 color)
+                                   (convert-part 8 color))))
+        final-patterns  (doall (mapv convert-pattern final-colors))]
+    (assert (= w 16))
+    (assert (= h 16))
+    {:colors   final-colors
+     :patterns final-patterns}))
