@@ -24,32 +24,27 @@
 ;; msx1 colors
 
 (def msx1-colors
-  (mapv (fn [[r g b]] (java.awt.Color. r g b 255))
-        [[0 0 0]
-         [0 0 0]
-         [0 241 20]
-         [68 249 86]
-         [85 79 255]
-         [128 111 255]
-         [250 80 51]
-         [12 255 255]
-         [255 81 52]
-         [255 115 86]
-         [226 210 4]
-         [242 217 71]
-         [4 212 19]
-         [231 80 229]
-         [208 208 208]
-         [255 255 255]]))
+  [[0 0 0 0]
+   [0 0 0 255]
+   [0 241 20 255]
+   [68 249 86 255]
+   [85 79 255 255]
+   [128 111 255 255]
+   [250 80 51 255]
+   [12 255 255 255]
+   [255 81 52 255]
+   [255 115 86 255]
+   [226 210 4 255]
+   [242 217 71 255]
+   [4 212 19 255]
+   [231 80 229 255]
+   [208 208 208 255]
+   [255 255 255 255]])
 
 (defn- color-distance
-  [c1 c2]
-  (let [r1 (.getRed c1)
-        r2 (.getRed c2)
-        b1 (.getBlue c1)
-        b2 (.getBlue c2)
-        g1 (.getGreen c1)
-        g2 (.getGreen c2)]
+  [[r1 g1 b1 a1] [r2 g2 b2 a2]]
+  (if (not= a1 a2)
+    Integer/MAX_VALUE
     (Math/sqrt (+ (Math/pow (- r1 r2) 2)
                   (Math/pow (- g1 g2) 2)
                   (Math/pow (- b1 b2) 2)))))
@@ -57,7 +52,7 @@
 (defn get-msx1-color-index
   [color]
   (->> msx1-colors
-       (map-indexed (fn [i c] [i (color-distance color c)]))
+       (map-indexed (fn [i msx-color] [i (color-distance msx-color color)]))
        (sort-by second)
        first
        first))
@@ -65,7 +60,13 @@
 (defn- extract-image-msx1-colors
   [image]
   (->> image get-pixels distinct
-       (map (fn [c] [c (get-msx1-color-index (java.awt.Color. c))]))
+       (map (fn [orig-color]
+              (let [a         (bit-and (bit-shift-right orig-color 24) 0xff)
+                    r         (bit-and (bit-shift-right orig-color 16) 0xff)
+                    g         (bit-and (bit-shift-right orig-color 8) 0xff)
+                    b         (bit-and (bit-shift-right orig-color 0) 0xff)
+                    msx-color (get-msx1-color-index [r g b a])]
+                [orig-color msx-color])))
        (into {})))
 
 
