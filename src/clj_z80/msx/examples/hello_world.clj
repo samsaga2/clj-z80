@@ -6,7 +6,7 @@
 
 (defasmbyte index)
 
-(defasmproc print {:page :code}
+(defasmproc print-text {:page :code}
   (label :loop
          [:ld :a [:hl]]
          [:or :a]
@@ -17,7 +17,7 @@
 
 (defasmproc hello-world {}
   [:ld :hl :text]
-  [:jp print]
+  [:jp print-text]
   (label :text
          (db "Hello world!" 13 10)
          (db "by Victor M." 13 10)
