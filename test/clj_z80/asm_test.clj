@@ -67,4 +67,11 @@
                      [:xor :a]
                      [:jr :label]])
       [0xaf
-       0x18 0xfd])))
+       0x18 0xfd]))
+  (testing "calculated label"
+    (with-resource
+      #(do (a/make-proc :short-proc 0
+                        [[:ld :hl (fn [] (:address (i/get-label :short-proc2)))]])
+           (a/make-proc :short-proc2 0
+                        [[:ret]]))
+      [0x21 0x03 0x10 0xc9])))

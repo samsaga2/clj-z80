@@ -58,7 +58,7 @@
 
 (defmacro defasmproc
   "Example:
-  (defasmproc example-proc {:page 0 :include-always true}
+  (defasmproc example-proc {:page 0}
     [:xor :a]
     [:ret])
 
@@ -116,14 +116,10 @@
 
 (defn db
   [& bytes]
-  (vec
-   (mapcat (fn [n]
-             (cond (string? n)
-                   (mapv (fn [c] [:db (int c)]) n)
-
-                   (number? n)
-                   [[:db (b/b n)]]))
-           bytes)))
+  [:db (vec (mapcat (fn [n]
+                      (cond (string? n) (mapv #(b/b (int %)) n)
+                            (number? n) [(b/b n)]))
+                    bytes))])
 
 (defn dw
   [& words]
