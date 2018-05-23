@@ -6,7 +6,7 @@
 (defn byte-two-complement
   [n]
   (if (or (> n 255)
-          (< n -127))
+          (< n -128))
     (throw (Exception. (str "Overflow byte " n)))
     (if (neg? n)
       (inc (bit-xor 0xff (- n)))
@@ -15,7 +15,7 @@
 (defn word-two-complement
   [n]
   (if (or (> n 65535)
-          (< n -32767))
+          (< n -32768))
     (throw (Exception. (str "Overflow word " n)))
     (if (neg?  n)
       (inc (bit-xor 0xffff (- n)))
