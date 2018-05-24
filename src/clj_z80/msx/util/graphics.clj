@@ -14,11 +14,11 @@
                      (for [x (range 8)]
                        (let [pixel (.getRGB image (int (+ start-x x)) (int (+ start-y y)))]
                          (color-conversion pixel)))))]
-    (assert (= w 256))
-    (assert (= h 192))
-    (for [y (range 24)]
-      (for [x (range 32)]
-        (get-tile (* x 8) (* y 8))))))
+    (assert (= (mod w 8) 0))
+    (assert (= (mod h 8) 0))
+    (for [y (range 0 h 8)]
+      (for [x (range 0 w 8)]
+        (get-tile x y)))))
 
 
 ;; msx1 colors
