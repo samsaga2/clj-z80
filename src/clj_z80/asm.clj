@@ -123,10 +123,9 @@
 
 (defn dw
   [& words]
-  (vec
-   (mapcat (fn [w]
-             [:db [(b/lw w) (b/hw w)]])
-           words)))
+  (mapv (fn [w]
+          [:db [(b/lw w) (b/hw w)]])
+        words))
 
 (defn ds
   ([len value]
