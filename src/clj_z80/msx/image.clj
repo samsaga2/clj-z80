@@ -74,8 +74,10 @@
                1 0x7000
                2 0x9000
                3 0xb000)]
-    [[:ld :a page-index]
-     [:ld [addr] :a]]))
+    (if (= page-index :a)
+      [[:ld [addr] :a]]
+      [[:ld :a page-index]
+       [:ld [addr] :a]])))
 
 (defn- emit-find-konami5-pages
   []
