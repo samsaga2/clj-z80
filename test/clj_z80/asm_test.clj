@@ -74,4 +74,28 @@
                         [[:ld :hl (fn [] (:address (i/get-label :short-proc2)))]])
            (a/make-proc :short-proc2 0
                         [[:ret]]))
-      [0x21 0x03 0x10 0xc9])))
+      [0x21 0x03 0x10 0xc9]))
+  (testing "db 1"
+    (with-resource
+      #(a/make-proc :short-proc2 0
+                    [(a/db 1)
+                     [:ret]])
+      [0x01 0xc9]))
+  (testing "db 1, 2, 3"
+    (with-resource
+      #(a/make-proc :short-proc2 0
+                    [(a/db 1 2 3)
+                     [:ret]])
+      [0x01 0x02 0x03 0xc9]))
+  (testing "dw 0x1234"
+    (with-resource
+      #(a/make-proc :short-proc2 0
+                    [(a/dw 0x1234)
+                     [:ret]])
+      [0x34 0x12 0xc9]))
+  (testing "dw 0x1234, 0x2345"
+    (with-resource
+      #(a/make-proc :short-proc2 0
+                    [(a/dw 0x1234 0x2345)
+                     [:ret]])
+      [0x34 0x12 0x45 0x23 0xc9])))
