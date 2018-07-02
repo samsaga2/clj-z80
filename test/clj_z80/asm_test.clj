@@ -98,4 +98,10 @@
       #(a/make-proc :short-proc2 0
                     [(a/dw 0x1234 0x2345)
                      [:ret]])
+      [0x34 0x12 0x45 0x23 0xc9]))
+  (testing "dw 0x1234, 0x2345"
+    (with-resource
+      #(a/make-proc :short-proc 0
+                    [(apply a/dw [(fn [] 0x1234) (fn [] 0x2345)])
+                     [:ret]])
       [0x34 0x12 0x45 0x23 0xc9])))

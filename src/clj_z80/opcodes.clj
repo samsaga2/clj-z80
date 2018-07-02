@@ -1374,7 +1374,16 @@
              (= (first instr) :db)
              (coll? (second instr))
              (every? n? (second instr)))
-        (mapv b/b (second instr))))
+        (mapv b/b (second instr))
+
+        (and (= (count instr) 2)
+             (= (first instr) :dw)
+             (coll? (second instr))
+             (every? n? (second instr)))
+        (vec (mapcat (fn [w]
+                       [(b/lw w)
+                        (b/hw w)])
+                     (second instr)))))
 
 (defn assemble-instr
   [instr]
